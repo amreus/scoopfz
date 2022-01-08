@@ -20,6 +20,7 @@ You can search for both insalled and updated apps using `^iu`
 
 Keys:
 
+
 ```
 F1  - `scoop home <selected>`
 F2  - `scoop install <selected>` - use the tab key to select multiple apps
@@ -29,3 +30,5 @@ F5  - `scoop hold <selected>`
 F6  - `scoop unhold <selected>`
 Esc - quit
 ```
+
+![2022-01-08_155134](https://user-images.githubusercontent.com/38442825/148660771-98c7fff0-62cc-4195-8a1d-ee76d385a09a.png)
