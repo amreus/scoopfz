@@ -1,0 +1,11 @@
+{
+	"version":  "0.0.1",
+	"license":  "MIT",
+	"extract_dir":  "",
+	"url":  "https://github.com/amreus/scoopfz/releases/download/v0.0.1/scoopfz.exe",
+	"depends":  "fzf",
+	"homepage":  "https://github.com/amreus/scoopfz",
+	"hash":  "0a161c740e7ce7cd2e3650b115ff6e557b17a9374115fbc3688b19eca84cf8bb",
+	"bin":  "scoopfz.exe"
+}
+
