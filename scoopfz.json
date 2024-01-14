@@ -1,4 +1,5 @@
 {
+	"description": "fuzzy search your local scoop apps (fzf)",
 	"version":  "0.0.1",
 	"license":  "MIT",
 	"extract_dir":  "",
