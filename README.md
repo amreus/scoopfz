@@ -10,12 +10,12 @@ start `fzf` using the list as input.
 
 ## Install (via scoop)
 
-    > scoop install https://raw.githubusercontent.com/amreus/scoopfz/main/scoopfz.json
+    scoop install https://raw.githubusercontent.com/amreus/scoopfz/main/scoopfz.json
 
 
 ## Usage
 
-    > scoopfz
+    scoopfz
     
 `scoopfz` requires `fzf` (scoop install fzf) https://github.com/junegunn/fzf
 
