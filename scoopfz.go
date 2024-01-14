@@ -220,7 +220,7 @@ func main() {
 			sb.WriteString(" ")
 		}
 
-		fmt.Fprintf(&sb, "| %8s", manifest.Bucket)
+		fmt.Fprintf(&sb, "| b:%-8s", manifest.Bucket)
 		color = ""
 		if manifest.Installed {
 			color = ColorGreen
@@ -242,6 +242,29 @@ func main() {
 
 	// Call fzf with sb as stdin
 
+	/*
+		var fzf_default_cmd = " --ansi" +
+			" --reverse" +
+			` --delimiter "\|"` +
+			" --no-hscroll" +
+			" --no-sort" +
+			" --multi" +
+			` --header "F1:Homepage | F2:Install | F3:Uninstall | F4:Update | F5:Hold | F6:Unhold | Esc:Exit"` +
+			` --bind "f1:execute(scoop home {3})"` +
+			` --bind "f2:execute(scoop install {+3})"` +
+			` --bind "f3:execute(scoop uninstall {+3})"` +
+			` --bind "f4:execute(scoop update {+3})"` +
+			` --bind "f5:execute(scoop hold {+3})"` +
+			` --bind "f6:execute(scoop unhold {+3})"` +
+			` --bind "ctrl-a:toggle-all"` +
+			` --bind "change:top"` +
+			` --preview-window "top:4:wrap"` +
+			` --preview "echo {3} {-1} {2} && echo {5} && echo {4}"`
+
+		log.Println(fzf_default_cmd)
+		_ = fzfpath
+		cmd := exec.Command("fzf", fzf_default_cmd)
+	*/
 	cmd := exec.Command(fzfpath,
 		"--ansi", "--reverse", `--delimiter=\|`,
 		"--no-hscroll", "--no-sort", "--multi",
@@ -254,9 +277,11 @@ func main() {
 		"--bind", "f6:execute(scoop unhold {+3})",
 		"--bind", "ctrl-a:toggle-all",
 		"--bind", "change:top",
+		"--bind", "ctrl-i:change-query(^i)",
 		"--preview-window=top:4:wrap",
 		"--preview=echo {3} {-1} {2} && echo {5} && echo {4}")
-	//log.Println(cmd.String())
+
+	log.Println(cmd.String())
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		log.Fatal(err, " could not pipe stdin")
