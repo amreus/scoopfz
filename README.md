@@ -12,7 +12,7 @@ start `fzf` using the list as input.
 
     scoop install https://raw.githubusercontent.com/amreus/scoopfz/main/scoopfz.json
 
-Or
+Or add my small scoop [bucket](https://github.com/amreus/bucket)
 
     scoop bucket add amreus https://github.com/amreus/bucket
     scoop install scoopfz
