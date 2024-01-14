@@ -7,6 +7,11 @@ Use Function keys to install & uninstall, update, and hold and unhold selected a
 Each time scoopfz is run, it rebuilds a list of apps from your bucket list and
 start `fzf` using the list as input.
 
+
+## Install (via scoop)
+`scoop install https://raw.githubusercontent.com/amreus/scoopfz/main/scoopfz.json`
+
+
 ## Usage
 
     > scoopfz
