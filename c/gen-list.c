@@ -6,7 +6,7 @@
 #include <dirent.h>
 #include <time.h>
 #include <stdbool.h>
-#include "C:\Users\Jim\repos\cJSON\cjson.h"
+#include "../../../cJSON/cjson.h"
 
 #define PATHLEN 256
 #define MAX_APPS 16384
@@ -18,13 +18,6 @@
 #define CYAN "\e[34m"
 #define RESET "\e[0m"
 
-char scoopRoot[]     = "C:/Users/Jim/scoop";
-char bucketsDir[]    = "C:/Users/Jim/scoop/buckets";
-char appsDir[]       = "C:/Users/Jim/scoop/apps";
-int n_apps           = 0;
-int n_apps_installed = 0;
-char installed_apps[MAX_APPS][NAME_LEN];
-
 typedef struct app {
 	char name[NAME_LEN];
 	char desc[PATHLEN];
@@ -35,6 +28,12 @@ typedef struct app {
 
 app_t appList[MAX_APPS];
 
+char scoopRoot[PATH_MAX];
+char bucketsDir[PATH_MAX];
+char appsDir[PATH_MAX];
+int n_apps;
+int n_apps_installed;
+char installed_apps[MAX_APPS][NAME_LEN];
 
 //
 // Funcs
@@ -45,14 +44,32 @@ void mark_installed_apps();
 void print_app(app_t app, FILE*);
 void write_apps(FILE *stream);
 
+void init() {
+
+	char *home = getenv("USERPROFILE");
+
+	if (home == NULL) {
+		fprintf(stderr, "Could not read USERPROFILE environment variable.'n");
+		exit(1);
+	}
+
+	snprintf(scoopRoot, PATH_MAX, "%s/scoop", home);
+	snprintf(bucketsDir, PATH_MAX, "%s/buckets", scoopRoot);
+	snprintf(appsDir, PATH_MAX, "%s/apps", scoopRoot);
+	n_apps = 0;
+	n_apps_installed = 0;
+}
 
 
 int main() {
+
+	init();
 
 	clock_t t1, t0 = clock();
 
 	DIR *dp = opendir(bucketsDir);
 	if (dp == NULL) {
+		printf("%d: Could not open dir %s\n", __LINE__, bucketsDir);
 		perror("opendir");
 		exit(1);
 	}
@@ -60,7 +77,7 @@ int main() {
 
 	while ((e = readdir(dp)) != NULL) {
 		char *bucketName = e->d_name;
-		char jsonDir[PATHLEN];
+		char jsonDir[MAX_PATH];
 		if (e->d_name[0] != '.') {
 			jsonDir[0] = '\0';
 			strcat(jsonDir, bucketsDir);
@@ -153,6 +170,7 @@ void load_apps(char * bn, char *dir) {
 	DIR *dp = opendir(dir);
 
 	if (dp == NULL) {
+		fprintf(stderr, "%d: Could not open dir %s\n", __LINE__, dir);
 		perror("opendir");
 		exit(1);
 	}
