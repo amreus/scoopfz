@@ -1,0 +1,15 @@
+sort /+5 app-list-%COMPUTERNAME% | fzf ^
+--delimiter "\|" ^
+--ansi ^
+--with-nth "1..4" ^
+--reverse ^
+--info inline ^
+--no-sort ^
+--header-first ^
+--header "SCOOPFZ: F1:Homepage | F2:Install | F3:Uninstall | ctrl-i:installed" ^
+--bind "ctrl-i:change-query(^*)" ^
+--bind "home:first" ^
+--bind "end:last" ^
+--bind "F1:execute-silent(scoop home {2})" ^
+--bind "F2:execute(scoop install {2})" ^
+--bind "F3:execute(scoop uninstall {2})"
