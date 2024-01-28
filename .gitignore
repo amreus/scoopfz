@@ -16,3 +16,5 @@
 
 session.vim
 .gitignore
+
+c/app-list-*
