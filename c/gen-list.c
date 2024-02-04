@@ -15,6 +15,7 @@
 #define MAX_PATH 260
 #endif
 
+#define GREEN "\e[32m"
 #define CYAN "\e[34m"
 #define RESET "\e[0m"
 
@@ -60,6 +61,12 @@ void init() {
 	n_apps_installed = 0;
 }
 
+static int cmpapp(const void *p1, const void *p2)
+{
+	app_t *a1 = (app_t *)p1;
+	app_t *a2 = (app_t *)p2;
+	return strcmp(a1->name, a2->name);
+}
 
 int main() {
 
@@ -92,6 +99,9 @@ int main() {
 	closedir(dp);
 
 	mark_installed_apps();
+	
+	//sort apps
+	qsort(appList, n_apps, sizeof(app_t), cmpapp);
 
 	char fname[1024];
 	strcpy(fname, "app-list-");
@@ -217,7 +227,6 @@ void load_apps(char * bn, char *dir) {
 
 			n_apps++;
 
-
 			cJSON_Delete(json);
 		}
 	}
@@ -227,11 +236,11 @@ void load_apps(char * bn, char *dir) {
 void print_app(app_t app, FILE* stream)
 {
 	if (app.installed)
-		fprintf(stream, "* | %-15.15s", app.name);
+		fprintf(stream, "* | "GREEN"%-15.15s"RESET, app.name);
 	else
 		fprintf(stream, "  | %-15.15s", app.name);
 
-	fprintf(stream, " | b:%-10s | %-120.120s", app.bucket, app.desc);
+	fprintf(stream, " | %-10s | %-150.150s", app.bucket, app.desc);
 	fprintf(stream, " |%s\n", app.homepage);
 }
 
