@@ -1,0 +1,5 @@
+---
+F1 - open app homepage
+F2 - install app
+F3 - uninstall app
+ctrl-i - view installed only
