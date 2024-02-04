@@ -1,18 +1,19 @@
 SHELL = cmd
 
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -g
 CC = gcc
 
 .SUFFIXES:
 
 
 gen-list.exe: gen-list.c
-	$(CC) $(CFLAGS) -o gen-list.exe gen-list.c C:\Users\Jim\repos\cJSON\b\libcjson.a
+	$(CC) $(CFLAGS) -o gen-list.exe gen-list.c ..\..\..\cJSON\b\libcjson.a
+
+
+.PHONY : t clean
 
 t: gen-list.exe
 	gen-list.exe
-	head app-list
-	wc -l app-list
 
 clean:
 	del gen-list.exe

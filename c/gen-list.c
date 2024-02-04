@@ -8,7 +8,10 @@
 #include <stdbool.h>
 #include "../../../cJSON/cjson.h"
 
-#define PATHLEN 256
+//#define STB_LEAKCHECK_IMPLEMENTATION
+//#include "../../../../code/c/stb_leakcheck.h"
+
+#define MAX_TEXT 256
 #define MAX_APPS 16384
 #define NAME_LEN 64
 #ifndef MAX_PATH
@@ -21,9 +24,9 @@
 
 typedef struct app {
 	char name[NAME_LEN];
-	char desc[PATHLEN];
+	char desc[MAX_TEXT];
 	char bucket[NAME_LEN];
-	char homepage[PATHLEN];
+	char homepage[MAX_TEXT];
 	bool installed;
 } app_t;
 
@@ -115,6 +118,7 @@ int main() {
 
 	fprintf(stderr, "time: %f\n", (double) (t1 - t0) / CLOCKS_PER_SEC);
 
+	//stb_leakcheck_dumpmem();
 	return 0;
 }
 
