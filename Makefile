@@ -1,7 +1,9 @@
-SHELL = cmd
+ifeq ($(OS),Windows_NT)
+	SHELL = cmd
+endif
 
-scoopfz.exe : scoopfz.go
-	go build
+scoopfz : scoopfz.go
+	go build $^
 
 .PHONY : clean fmt
 
