@@ -14,6 +14,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	fzf "github.com/junegunn/fzf/src"
 )
 
 type Manifest struct {
@@ -63,15 +65,11 @@ func hasArg(arg string) bool {
 
 func main() {
 
+	fmt.Println("This can be slow on firt run because Windows.")
 	var err error
-	scoopRoot := path.Join(os.Getenv("USERPROFILE"), "scoop")
+	userHome, err := os.UserHomeDir()
+	scoopRoot := path.Join(userHome, "scoop")
 	bucketDir := scoopRoot + "/buckets"
-
-	fzfpath, err := exec.LookPath("fzf")
-	if err != nil {
-		fmt.Println("Could not find fzf.")
-		os.Exit(1)
-	}
 
 	log.SetFlags(log.Lshortfile)
 	var (
@@ -240,63 +238,48 @@ func main() {
 				manifest.Version))
 	}
 
-	// Call fzf with sb as stdin
+	os.WriteFile("out", []byte(sb.String()), 0644)
 
-	/*
-		var fzf_default_cmd = " --ansi" +
-			" --reverse" +
-			` --delimiter "\|"` +
-			" --no-hscroll" +
-			" --no-sort" +
-			" --multi" +
-			` --header "F1:Homepage | F2:Install | F3:Uninstall | F4:Update | F5:Hold | F6:Unhold | Esc:Exit"` +
-			` --bind "f1:execute(scoop home {3})"` +
-			` --bind "f2:execute(scoop install {+3})"` +
-			` --bind "f3:execute(scoop uninstall {+3})"` +
-			` --bind "f4:execute(scoop update {+3})"` +
-			` --bind "f5:execute(scoop hold {+3})"` +
-			` --bind "f6:execute(scoop unhold {+3})"` +
-			` --bind "ctrl-a:toggle-all"` +
-			` --bind "change:top"` +
-			` --preview-window "top:4:wrap"` +
-			` --preview "echo {3} {-1} {2} && echo {5} && echo {4}"`
+	options, err := fzf.ParseOptions(
+		true, // whether to load defaults ($FZF_DEFAULT_OPTS_FILE and $FZF_DEFAULT_OPTS)
+		[]string{
+			"--ansi", "--reverse", `--delimiter=\|`, "--border=sharp",
+			"--no-hscroll", "--no-sort", "--multi",
+			"--header", "F1:Homepage | F2:Install | F3:Uninstall | F4:Update | F5:Hold | F6:Unhold | Esc:Exit",
+			"--bind", "f1:execute(scoop home {3})",
+			"--bind", "f2:execute(scoop install {+3})",
+			"--bind", "f3:execute(scoop uninstall {+3})",
+			"--bind", "f4:execute(scoop update {+3})",
+			"--bind", "f5:execute(scoop hold {+3})",
+			"--bind", "f6:execute(scoop unhold {+3})",
+			"--bind", "ctrl-a:toggle-all",
+			"--bind", "change:top",
+			"--bind", "ctrl-i:change-query(^i)",
+			"--bind", "home:pos(1)",
+			"--bind", "end:pos(-1)",
+			"--preview-window=top:4:wrap",
+			"--preview=echo {3} {-1} {2} && echo {5} && echo {4}"},
+	)
 
-		log.Println(fzf_default_cmd)
-		_ = fzfpath
-		cmd := exec.Command("fzf", fzf_default_cmd)
-	*/
-	cmd := exec.Command(fzfpath,
-		"--ansi", "--reverse", `--delimiter=\|`,
-		"--no-hscroll", "--no-sort", "--multi",
-		"--header", "F1:Homepage | F2:Install | F3:Uninstall | F4:Update | F5:Hold | F6:Unhold | Esc:Exit",
-		"--bind", "f1:execute(scoop home {3})",
-		"--bind", "f2:execute(scoop install {+3})",
-		"--bind", "f3:execute(scoop uninstall {+3})",
-		"--bind", "f4:execute(scoop update {+3})",
-		"--bind", "f5:execute(scoop hold {+3})",
-		"--bind", "f6:execute(scoop unhold {+3})",
-		"--bind", "ctrl-a:toggle-all",
-		"--bind", "change:top",
-		"--bind", "ctrl-i:change-query(^i)",
-		"--preview-window=top:4:wrap",
-		"--preview=echo {3} {-1} {2} && echo {5} && echo {4}")
-
-	log.Println(cmd.String())
-	stdin, err := cmd.StdinPipe()
-	if err != nil {
-		log.Fatal(err, " could not pipe stdin")
-	}
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stdout
-
+	inputChan := make(chan string)
 	go func() {
-		defer stdin.Close()
-		io.WriteString(stdin, sb.String())
+		lines := strings.Split(sb.String(), "\n")
+		for _, line := range lines {
+			inputChan <- line
+		}
+		close(inputChan)
 	}()
 
-	if err = cmd.Run(); err != nil {
-		log.Printf("%v could not get combined output.\n", err)
+	options.Input = inputChan
+	exit := func(code int, err error) {
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+		}
+		os.Exit(code)
 	}
+	code, err := fzf.Run(options)
+	//fmt.Println(code)
+	exit(code, err)
 }
 
 func pressEnterToContinue() {
