@@ -21,7 +21,7 @@ Or add my small scoop [bucket](https://github.com/amreus/bucket)
 
     scoopfz
     
-`scoopfz` requires `fzf` (scoop install fzf) https://github.com/junegunn/fzf
+~~`scoopfz` requires `fzf` (scoop install fzf) https://github.com/junegunn/fzf~~
 
 Installed apps are colored green.
 
